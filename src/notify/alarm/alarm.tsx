@@ -1,11 +1,10 @@
 import React, { Component } from 'react'
 import './alarm.css'
-import dummyData from '../../dummyStore'
 
 
 interface AlarmProps {
-    notificationCount: number
     toggleNotificationMenu: Function
+    notificationCount: number
 }
 
 type AlarmTypes = {
