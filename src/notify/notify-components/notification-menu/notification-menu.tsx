@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import NotifyStore from '../../notification-store/notification-store'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import './notification-menu.css'
 
 interface NotificationMenuProps {

@@ -2,17 +2,16 @@ import React, { Component } from 'react';
 import Notify from './notify/notify-components/notify'
 import './App.css'
 import NotifyStore from './notify/notification-store/notification-store';
-import { types } from 'node:util';
 
-interface NotificationMenuProps {
+interface Props {
 
 }
 
-type NotificationMenuTypes = {
+type Types = {
   notArr: any
 }
 
-class App extends Component<NotificationMenuProps, NotificationMenuTypes>{
+class App extends Component<Props, Types>{
 
   constructor(props: any) {
     super(props)
@@ -21,9 +20,8 @@ class App extends Component<NotificationMenuProps, NotificationMenuTypes>{
     }
   }
 
-
   componentDidMount() {
-    setInterval(this.getPurgeTest, 500)
+    // setInterval(this.getPurgeTest, 500)
   }
 
   getPurgeTest = () => {
@@ -54,11 +52,7 @@ class App extends Component<NotificationMenuProps, NotificationMenuTypes>{
     this.setState({ notArr: foo })
   }
 
-
   render() {
-
-
-
 
     return (
       <div className="App">
@@ -72,7 +66,7 @@ class App extends Component<NotificationMenuProps, NotificationMenuTypes>{
           endPoint={'http://localhost:8000'}
           config={''}//put axios config here
         />
-        {this.state.notArr}
+        {/* {this.state.notArr} */}
       </div>
     )
   }

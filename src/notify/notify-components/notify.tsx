@@ -23,6 +23,7 @@ type NotifyTypes = {
 
 class Notify extends React.Component<NotifyProps, NotifyTypes> {
 
+    wrapperRef: React.RefObject<any>
     renderCount = 0
 
     constructor(props: any) {
@@ -32,6 +33,8 @@ class Notify extends React.Component<NotifyProps, NotifyTypes> {
             notificationCount: 0,
             notificationMenuOpen: false,
         }
+        this.wrapperRef = React.createRef();
+        this.handleClickOutside = this.handleClickOutside.bind(this);
     }
 
     componentDidMount() {
@@ -41,7 +44,19 @@ class Notify extends React.Component<NotifyProps, NotifyTypes> {
         this.refreshNotifications()
         setInterval(this.refreshNotifications, this.props.updateInterval)
         setInterval(this.listenForChange, 500)
+        document.addEventListener('mousedown', this.handleClickOutside);
         // setInterval(this.addDummies, 1000)
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('mousedown', this.handleClickOutside);
+    }
+
+    handleClickOutside = (event: { target: any }) => {
+        if (this.wrapperRef && !this.wrapperRef.current.contains(event.target) && this.state.notificationMenuOpen && this.props.clickOutside
+        ) {
+            this.toggleNotificationMenu()
+        }
     }
 
     addDummies = () =>{
@@ -84,7 +99,7 @@ class Notify extends React.Component<NotifyProps, NotifyTypes> {
     render() {
 
         return (
-            <div className="Notify">
+            <div className="Notify" ref={this.wrapperRef}>
                 {this.props.alarm && <Alarm
                     toggleNotificationMenu={this.toggleNotificationMenu}
                     notificationCount={this.state.notificationCount}
