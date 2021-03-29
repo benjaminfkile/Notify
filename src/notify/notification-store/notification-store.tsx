@@ -3,7 +3,7 @@ import moment from "moment";
 import generateUUID from '../notification-utilities/uuid-gen'
 import getIpsum from '../notification-utilities/lorem-ipsum'
 
-const NotifyStore = {
+const NotifyStore: any = {
 
     endPoint: "",
     userId: "",
@@ -18,7 +18,8 @@ const NotifyStore = {
                 return 'oop'
             })
     },
-    readNotification: (id: string) => {
+    readNotification: (id: string, index: number) => {
+        NotifyStore.notifications[index].notificationstate = "read"
         axios.post(`${NotifyStore.endPoint}/api/notifications/read/${id}`)
             .then((res: any) => {
                 NotifyStore.getNotifications()
@@ -27,7 +28,8 @@ const NotifyStore = {
                 return 'oop'
             })
     },
-    dismissNotification: (id: string) => {
+    dismissNotification: (id: string, index: number) => {
+        NotifyStore.notifications[index].notificationstate = "dismissed"
         axios.post(`${NotifyStore.endPoint}/api/notifications/dismiss/${id}`)
             .then((res: any) => {
                 NotifyStore.getNotifications()
@@ -36,7 +38,16 @@ const NotifyStore = {
                 return 'oop'
             })
     },
-    deleteNotification: (id: string) => {
+    dismissAllNotifications: () => {
+        if (NotifyStore.notifications.length > 0) {
+            for (let i = 0; i < NotifyStore.notifications.length; i++) {
+                let notification: any = NotifyStore.notifications[i]
+                NotifyStore.dismissNotification(notification.id, i)
+            }
+        }
+    },
+    deleteNotification: (id: string, index: number) => {
+        NotifyStore.notifications[index].notificationstate = "deleted"
         axios.post(`${NotifyStore.endPoint}/api/notifications/delete/${id}`)
             .then((res: any) => {
                 NotifyStore.getNotifications()
@@ -47,21 +58,21 @@ const NotifyStore = {
     },
     purge: (docId: string, action: string) => {
         console.log(docId)
-        if(NotifyStore.notifications.length > 0){
-            for(let i = 0; i < NotifyStore.notifications.length; i++){
+        if (NotifyStore.notifications.length > 0) {
+            for (let i = 0; i < NotifyStore.notifications.length; i++) {
                 try {
                     let notification: any = NotifyStore.notifications[i]
-                    notification = notification.linkto.split("/") 
-                    let id: any = docId.split("/") 
-                    if(notification[2] === id[2]){
+                    notification = notification.linkto.split("/")
+                    let id: any = docId.split("/")
+                    if (notification[2] === id[2]) {
                         let foo: any = NotifyStore.notifications[i]
-                        if(action === "read"){
+                        if (action === "read") {
                             NotifyStore.readNotification(foo.id)
                         }
-                        if(action === "dismiss"){
+                        if (action === "dismiss") {
                             NotifyStore.dismissNotification(foo.id)
                         }
-                        if(action === "delete"){
+                        if (action === "delete") {
                             NotifyStore.deleteNotification(foo.id)
                         }
                     }
@@ -69,7 +80,7 @@ const NotifyStore = {
                     console.log(error)
                 }
             }
-        }        
+        }
     }, postDummy: () => {
         const postTitle = getIpsum.split(" ")[Math.floor(Math.random() * getIpsum.length)]
         const request = {

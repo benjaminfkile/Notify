@@ -43,9 +43,9 @@ class Notify extends React.Component<NotifyProps, NotifyTypes> {
         NotifyStore.config = this.props.config
         this.refreshNotifications()
         setInterval(this.refreshNotifications, this.props.updateInterval)
-        setInterval(this.listenForChange, 500)
+        setInterval(this.listenForChange, 100 )
         document.addEventListener('mousedown', this.handleClickOutside);
-        // setInterval(this.addDummies, 1000)
+        // setInterval(this.addDummies, 100)
     }
 
     componentWillUnmount() {
@@ -66,7 +66,6 @@ class Notify extends React.Component<NotifyProps, NotifyTypes> {
     listenForChange = () => {
         if (this.state.notifications !== NotifyStore.notifications) {
             this.countNotifications(NotifyStore.notifications)
-
         }
     }
 
@@ -74,7 +73,6 @@ class Notify extends React.Component<NotifyProps, NotifyTypes> {
         this.renderCount ++
         NotifyStore.getNotifications()
     }
-
 
     toggleNotificationMenu = () => {
         if (this.state.notificationMenuOpen) {

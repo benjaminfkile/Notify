@@ -1,3 +1,5 @@
+import { setMaxListeners } from 'node:process'
+import { types } from 'node:util'
 import React, { Component } from 'react'
 import NotifyStore from '../../notification-store/notification-store'
 // import { Link } from 'react-router-dom'
@@ -24,11 +26,8 @@ class NotificationMenu extends Component<NotificationMenuProps, NotificationMenu
         super(props)
         this.state = {
             ascending: true,
-            firstRender: true
+            firstRender: true,
         }
-    }
-
-    componentDidMount() {
     }
 
     toggleOrder = () => {
@@ -45,6 +44,17 @@ class NotificationMenu extends Component<NotificationMenuProps, NotificationMenu
         } else {
             return notifications.sort((a, b) => (new Date(b.timestamp) < new Date(a.timestamp)) ? 1 : -1)
         }
+    }
+
+
+    animateDismiss = (notification: any, index: number) => {
+
+        let toSlide: any = document.getElementById("notification-slide-wrapper-" + index);
+        toSlide.className = "Notification-Slide-Exit"
+
+        setTimeout(function () {
+            NotifyStore.dismissNotification(notification, index)
+        }, 300);
     }
 
     render() {
@@ -64,40 +74,44 @@ class NotificationMenu extends Component<NotificationMenuProps, NotificationMenu
                     <div className={"Notification-Menu-Header"}>
                         <p>Notifications: {this.props.notificationCount}</p>
                         <div id="notification-menu-header-buttons">
-                            {/* <p id="not-menu-sweep" className="material-icons" onClick={() => this.updateNotification(this.props.notifications, "dismiss-all")}>delete_sweep</p> */}
+                            <p id="not-menu-sweep" className="material-icons" onClick={() => NotifyStore.dismissAllNotifications()}>delete_sweep</p>
                             {this.state.ascending && this.props.notificationCount > 1 && <p id="not-menu-asc" className="material-icons" onClick={() => this.toggleOrder()}>flip_to_front</p>}
                             {!this.state.ascending && this.props.notificationCount > 1 && <p id="not-menu-desc" className="material-icons" onClick={() => this.toggleOrder()}>flip_to_back</p>}
                         </div>
                     </div>
-                    {this.sortNotifications(this.props.notifications, this.state.ascending).map((notification: any) => <div key={Math.random()} className={"Notification-Item-" + this.renderCount}>
+                    {this.sortNotifications(this.props.notifications, this.state.ascending).map((notification: any, i: number) => <div key={Math.random()} className={"Notification-Item-" + this.renderCount}>
                         {notification.notificationstate === "read" && <div id="notification-read">
-                            <p id="notification-title">{notification.title}</p>
-                            <div id="notification-text" onClick={() => NotifyStore.readNotification(notification.id)}>
-                                {/* <Link to={notification.linkto}>{notification.text}</Link> */}
-                                <p id="notification-text-p">{notification.text}</p>
-                            </div>
-                            <div id="notification-item-buttons">
-                                <p id="not-menu-top" className="material-icons">drafts</p>
-                                <p id="not-menu-id">ID: {notification.id}</p>
-                                <button id="not-menu-btm" className="material-icons" onClick={() => NotifyStore.dismissNotification(notification.id)}>close</button>
+                            <div id={"notification-slide-wrapper-" + i} >
+                                <p id="notification-title">{notification.title}</p>
+                                <div id="notification-text" onClick={() => NotifyStore.readNotification(notification.id, i)}>
+                                    {/* <Link to={notification.linkto}>{notification.text}</Link> */}
+                                    <p id="notification-text-p">{notification.text}</p>
+                                </div>
+                                <div id="notification-item-buttons">
+                                    <p id="not-menu-top" className="material-icons">drafts</p>
+                                    <p id="not-menu-id">ID: {notification.id}</p>
+                                    <button id="not-menu-btm" className="material-icons" onClick={() => this.animateDismiss(notification.id, i)}>close</button>
+                                </div>
                             </div>
                         </div>}
                         {notification.notificationstate === "new" && <div id="notification-unread">
-                            <p id="notification-title">{notification.title}</p>
-                            <div id="notification-text" onClick={() => NotifyStore.readNotification(notification.id)}>
-                                {/* <Link to={notification.linkto}>{notification.text}</Link> */}
-                                <p id="notification-text-p">{notification.text}</p>
-                            </div>
-                            <div id="notification-item-buttons">
-                                {this.renderCount === 1 && <p id="not-menu-top-unread-r1" className="material-icons">markunread</p>}
-                                {this.renderCount > 1 && <p id="not-menu-top-unread-r2" className="material-icons">markunread</p>}
-                                <p id="not-menu-id">ID: {notification.id}</p>
-                                <button id="not-menu-btm" className="material-icons" onClick={() => NotifyStore.dismissNotification(notification.id)}>close</button>
+                            <div id={"notification-slide-wrapper-" + i} >
+                                <p id="notification-title">{notification.title}</p>
+                                <div id="notification-text" onClick={() => NotifyStore.readNotification(notification.id, i)}>
+                                    {/* <Link to={notification.linkto}>{notification.text}</Link> */}
+                                    <p id="notification-text-p">{notification.text}</p>
+                                </div>
+                                <div id="notification-item-buttons">
+                                    {this.renderCount === 1 && <p id="not-menu-top-unread-r1" className="material-icons">markunread</p>}
+                                    {this.renderCount > 1 && <p id="not-menu-top-unread-r2" className="material-icons">markunread</p>}
+                                    <p id="not-menu-id">ID: {notification.id}</p>
+                                    <button id="not-menu-btm" className="material-icons" onClick={() => this.animateDismiss(notification.id, i)}>close</button>
+                                </div>
                             </div>
                         </div>}
                     </div>)}
-                    <div id="not-menu-pad-hack"></div>
                 </div>}
+                {this.props.notificationCount > 0 && <div id="not-menu-pad-hack"></div>}
             </div>
         )
     }
