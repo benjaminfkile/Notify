@@ -1,0 +1,26 @@
+.Alarm{
+    border: none;
+}
+.Alarm-Wrapper{
+    display: flex;
+    margin-top: 5px;
+    cursor: pointer;
+    -webkit-user-select: none; /* Chrome/Safari */ 
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+ */
+    user-select: none;
+    background-color: black;
+    border: none;
+}
+.Alarm-Wrapper span{
+    color: #9a9da0;
+}
+.Alarm-Wrapper span:hover{
+    color: #ffffff;
+}
+.Alarm-Wrapper p{
+    color: white;
+}
+.Alarm-Wrapper p:hover{
+    color: #9a9da0;
+}
